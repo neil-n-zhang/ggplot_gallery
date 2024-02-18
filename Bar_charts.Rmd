@@ -1,0 +1,56 @@
+---
+title: "Bar_charts"
+output: html_document
+date: "2024-02-17"
+---
+```{r}
+library(ggplot2)
+library(tidyverse)
+```
+
+```{r}
+mpg[1:10,c(1,2,3,7,9,10,11)]
+```
+
+## For geom_bar(), the default behavior is to count the rows for each x value. It doesn't expect a y-value, since it's going to count that up itself.
+
+```{r}
+ggplot(mpg, aes(class))+ geom_bar()
+# Equal to ggplot(mpg, aes(class))+ geom_bar(stat = "count")
+```
+
+## For geom_col, it expects you to already have the y values calculated and to use them directly.
+```{r}
+mpg_count=mpg %>% group_by(class) %>% summarise(count_n=n()) %>% ungroup()
+mpg_count
+```
+
+```{r}
+ggplot(mpg_count, aes(class,count_n))+ geom_col()
+```
+## You can also use geom_bar(stat = "identity"), then it is the same as geom_col()
+
+```{r}
+ggplot(mpg_count, aes(class,count_n))+ geom_bar(stat = "identity")+
+  geom_text(aes(label=count_n), vjust=-0.3, size=3.5)
+```
+
+## If there are subtypes within each group, we can either stack them or put them side-by-side
+```{r}
+mpg_drv_count=mpg %>% group_by(class, drv) %>% summarise(count_n=n()) %>% ungroup()
+mpg_drv_count
+```
+
+```{r}
+ggplot(mpg_drv_count, aes(class,count_n))+ geom_col()
+```
+
+```{r}
+ggplot(mpg_drv_count, aes(class,count_n,fill=drv))+ geom_col()
+# default geom_col(position = "stack")
+```
+
+```{r}
+ggplot(mpg_drv_count, aes(class,count_n,fill=drv))+ geom_col(position = "dodge")
+```
+

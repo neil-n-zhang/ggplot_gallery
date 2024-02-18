@@ -1,0 +1,77 @@
+---
+title: "Bar_charts"
+output: html_document
+date: "2024-02-17"
+---
+```{r}
+library(ggplot2)
+library(patchwork)
+```
+
+```{r}
+set.seed(3)
+x1 <- rnorm(100, mean=1)
+x2 <- rnorm(100, mean = 3)
+x <- c(x1, x2)
+group <- c(rep("G1", 100), rep("G2", 100))
+
+df <- data.frame(x, group_G1_G2 = group)
+df
+```
+
+## By default, if the histograms overlap, the values will be stacked. 
+
+```{r}
+ggplot(df, aes(x = x, fill = group_G1_G2, colour= group_G1_G2)) + 
+  geom_histogram(alpha = 0.5)
+```
+
+## Seperate the stacked groups
+
+```{r}
+ggplot(df, aes(x = x, fill = group_G1_G2, colour= group_G1_G2)) + 
+  geom_histogram(alpha = 0.5, position = "identity")
+```
+
+## Add an space between each bar so you will be able to see both histograms for different groups
+
+```{r}
+ggplot(df, aes(x = x, fill = group_G1_G2, colour= group_G1_G2)) + 
+  geom_histogram(alpha = 0.5,position = "dodge")
+```
+
+## Change the number of bins
+
+```{r}
+g1=ggplot(df, aes(x = x, fill = group_G1_G2, colour= group_G1_G2)) + 
+  geom_histogram(breaks = seq(-2, 6, by = 2), alpha = 0.5, position = "identity")
+
+g2=ggplot(df, aes(x = x, fill = group_G1_G2, colour= group_G1_G2)) + 
+  geom_histogram(bins = 3, alpha = 0.5, position = "identity")
+
+g1+g2
+```
+
+
+## Custom legend fill colours
+
+```{r}
+g1=ggplot(df, aes(x = x, fill = group_G1_G2)) + 
+  geom_histogram(alpha = 0.5, colour= 1, position = "identity")+
+  scale_fill_manual(values = c("#8795E8", "#FF6AD5"))
+
+g2=ggplot(df, aes(x = x, fill = group_G1_G2)) + 
+  geom_histogram(alpha = 0.5, colour= 1, position = "identity")+
+  scale_fill_brewer(palette ="Set1")
+
+g1+g2
+```
+
+## Custom legend title and labels
+
+```{r}
+ggplot(df, aes(x = x, fill = group_G1_G2)) + 
+  geom_histogram(alpha = 0.5, colour= 1, position = "identity")+
+  scale_fill_discrete(labels = c("A", "B"))+ 
+  guides(fill = guide_legend(title = "Title"))
+```

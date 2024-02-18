@@ -1,6 +1,8 @@
 ---
 title: "Bar_charts"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 date: "2024-02-17"
 ---
 ```{r}
@@ -67,8 +69,25 @@ g2=ggplot(df, aes(x = x, fill = group_G1_G2)) +
 g1+g2
 ```
 
-## Custom legend title and labels
+## Show densitiy instead of count
+```{r}
+g1=ggplot(df, aes(x = x, fill = group_G1_G2)) + 
+  geom_histogram(alpha = 0.5, colour= 1, position = "identity")+ 
+  theme(legend.position = "none")
 
+g2=ggplot(df, aes(x = x, fill = group_G1_G2)) + 
+  geom_histogram(aes(y = after_stat(density)), alpha = 0.5, colour= 1, position = "identity")+ 
+  theme(legend.position = "none")
+g1+g2
+```
+
+## Show density, a smoothed version of the histogram. For continuous data that comes from an underlying smooth distribution.
+```{r}
+ggplot(df, aes(x = x, fill = group_G1_G2)) + 
+  geom_density(alpha = 0.5, colour= 1)
+```
+
+## Custom legend title and labels
 ```{r}
 ggplot(df, aes(x = x, fill = group_G1_G2)) + 
   geom_histogram(alpha = 0.5, colour= 1, position = "identity")+

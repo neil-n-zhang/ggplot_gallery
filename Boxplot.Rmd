@@ -1,0 +1,95 @@
+---
+title: "Boxplot"
+output: html_document
+date: "2024-02-18"
+---
+
+```{r}
+library(ggplot2)
+library(tibble)
+library(patchwork)
+library(ggpubr)
+```
+
+```{r}
+InsectSprays[1:15,]
+```
+
+```{r}
+ggplot(aes(y = count, x = spray, fill=spray), data = InsectSprays) +
+  geom_boxplot(outlier.shape = 4)+
+  theme_bw()
+```
+
+## Add the raw data point, you may want to turn off outlier for boxplot to prevent the same outlier from showing twice
+```{r}
+ggplot(aes(y = count, x = spray, fill=spray), data = InsectSprays) +
+  geom_boxplot(outlier.shape  = NA)+
+  geom_jitter(color="black", size=0.4, alpha=0.9, width = 0.2) +
+  theme_bw()
+```
+
+## Plot with ggpubr
+```{r}
+ggboxplot(InsectSprays, x = "spray", y = "count",
+                color = "spray",add = "jitter")
+```
+
+## Plot paired data with ggpubr
+```{r}
+# Chick is an ordered factor with levels 18 < … < 48 giving a unique identifier for the chick. 
+head(ChickWeight[ChickWeight$Diet==1,])
+```
+
+
+```{r}
+ggpaired(ChickWeight[ChickWeight$Diet==1,], x = "Time", y = "weight",id = "Chick",
+ color = "Time", line.color = "gray", line.size = 0.4,xlab = "Time", ylab = "weight")
+```
+
+## Notched box plot
+### In a notched box plot, the notches extend 1.58 * IQR / sqrt(n), (where IQR is the inter-quartile range, or distance between the first and third quartiles). This gives a roughly 95% confidence interval for comparing medians.
+### If the notches (confidence interval) of two groups do not overlap, that indicates they are significantly different.
+### However, if the confidence interval is larger than IQR, the figure will look weird.
+
+```{r}
+x <- rnorm(150)
+y <- rnorm(50, mean=0.8)
+
+g1=ggplot(
+  data = data.frame(
+    num = c(x, y),
+    idx = c(rep("x", 150), rep("y", 50))
+  ),
+  aes(x = idx, y = num, fill = idx)
+) +
+  geom_boxplot(notch = TRUE)
+
+g2=ggplot(aes(y = count, x = spray, fill=spray), data = InsectSprays) +
+  geom_boxplot(notch = T, outlier.shape = 4, show.legend = F)+
+  theme_bw()
+
+g1+g2
+```
+
+## Violin plot
+### Similar to box plots, except that they also show the kernel probability density of the data
+```{r}
+ggplot(aes(y = count, x = spray, fill=spray), data = InsectSprays) +
+  geom_violin()+
+  theme_bw()
+```
+
+## Violin plot with dots
+```{r}
+g1=ggplot(aes(y = count, x = spray), data = InsectSprays) +
+  geom_violin(aes(fill=spray))+
+  geom_dotplot(binaxis='y', stackdir='center',dotsize = 0.2)+
+  theme_bw()
+
+g2=ggplot(aes(y = count, x = spray, fill=spray), data = InsectSprays) +
+  geom_violin()+
+  geom_jitter(shape=16, position=position_jitter(0.2))+
+  theme_bw()
+g1+g2
+```

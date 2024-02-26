@@ -1,0 +1,52 @@
+---
+title: "Scatter_dot_plot"
+output: html_document
+date: "2024-02-24"
+---
+
+```{r}
+library(ggplot2)
+library(tibble)
+library(patchwork)
+library(ggpubr)
+```
+
+```{r}
+mtcars[1:5,]
+mtcars$cyl=as.factor(mtcars$cyl)
+mtcars$vs=as.factor(mtcars$vs)
+```
+
+# Scatter plots. These are useful for plotting multivariate data. They can help you determine potential relationships among scale variables. ## Both x and y axis are continous variables
+```{r}
+g1=ggplot(mtcars, aes(x=wt, y=mpg)) + geom_point()
+g2=ggplot(mtcars, aes(x=wt, y=mpg, shape=cyl, color=cyl)) +
+  geom_point()
+g1+g2
+```
+
+## Add the regression line
+```{r}
+g1=ggplot(mtcars, aes(x=wt, y=mpg)) + 
+  geom_point() +
+  geom_smooth(method=lm)
+
+g2=ggplot(mtcars, aes(x=wt, y=mpg, shape=cyl, color=cyl)) +
+  geom_point()+ 
+  geom_smooth(method=lm, se=FALSE, fullrange=TRUE)
+g1+g2
+```
+
+# Dotplot. Like histograms, these are useful for showing the distribution of a single scale variable. The x axis is categorical data.
+## You can see from the right figure, the nearby dots are binned and put on the same y axis level, we can also see the overlapping dots better.
+```{r}
+p1=ggplot(mtcars, aes(x=cyl, y=mpg)) + geom_point()
+p2=ggplot(mtcars, aes(x=cyl, y=mpg)) + geom_dotplot(binaxis='y', stackdir='center')
+p1+p2
+```
+## Dot plot with multiple groups
+```{r}
+ggplot(mtcars, aes(x=cyl, y=mpg, fill=vs)) +
+  geom_dotplot(binaxis='y', stackdir='center', 
+               position=position_dodge(0.8))
+```

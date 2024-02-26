@@ -1,0 +1,47 @@
+---
+title: "Heatmap"
+output: html_document
+date: "2024-02-25"
+---
+
+```{r}
+library(RColorBrewer)
+library(gplots)
+```
+
+```{r}
+mtcars[1:5,]
+```
+```{r}
+class(mtcars)
+```
+
+# A heat map is a false color image with a dendrogram added to the left side and/or to the top. Typically, the rows and columns are reordered according to the dendrogram.
+```{r}
+heatmap.2(as.matrix(mtcars), col = brewer.pal(9, "RdYlBu"), 
+        scale = "none",trace = "none", density.info = "none", margins = c(4, 12))
+```
+
+## All the hp and disp variables that have very high values compared to the others. We need to normalize the data.
+```{r}
+heatmap.2(as.matrix(mtcars), col = brewer.pal(9, "RdYlBu"), 
+        scale = "column",trace = "none", density.info = "none", margins = c(4, 12))
+```
+
+## By default, the heatmap is made using Euclidean distance, you can change it by setting up "distfun", or perform the hierarchical clustering first and draw heatmap according to the result.
+```{r}
+## Row clustering (adjust here distance/linkage methods to what you need!)
+hr <- hclust(as.dist(1-cor(t(mtcars), method="pearson")), method="complete")
+ 
+## Column clustering (adjust here distance/linkage methods to what you need!)
+hc <- hclust(as.dist(1-cor(mtcars, method="spearman")), method="complete")
+ 
+## Plot heatmap
+heatmap.2(as.matrix(mtcars), Rowv=as.dendrogram(hr), Colv=as.dendrogram(hc), col = brewer.pal(9, "RdYlBu"),
+          scale="column", density.info="none", trace="none", margins = c(4, 12))
+
+```
+
+
+
+

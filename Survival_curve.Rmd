@@ -1,0 +1,38 @@
+---
+title: "Survival_curve"
+output: html_document
+date: "2024-03-02"
+---
+
+```{r}
+library(survival)
+# Use survminer library if you want to draw survival curve through ggplot
+```
+
+```{r}
+# time 9, status 1 means that patient dies at time 9. time 13, status 0 means that the patient is alive at time 13, but is not traceable after time 13 (Censored subjects).
+head(aml)
+```
+# The survival probability refers to the probability that a individual survives more than time t.
+##  Kaplan-Meier curve
+```{r}
+leukemia.surv <- survfit(Surv(time, status) ~ x, data = aml)
+plot(leukemia.surv, lty = 1:2, xlab = "time",ylab = "Survival probability")
+legend("topright", c("Maintenance", "No Maintenance"), lty = 1:2, bty = "n")
+```
+
+```{r}
+class(leukemia.surv)
+```
+
+## Mark the censored objects
+```{r}
+plot(leukemia.surv, lty = 1:2,mark.time = T , xlab = "time",ylab = "Survival probability")
+legend("topright", c("Maintenance", "No Maintenance"), lty = 1:2, bty = "n")
+```
+
+## Log-rank test: tests if there is a difference between two or more survival curves. With rho = 0 this is the log-rank or Mantel-Haenszel test, and with rho = 1 it is equivalent to the Peto & Peto modification of the Gehan-Wilcoxon test.
+```{r}
+survdiff(Surv(time, status) ~ x, data = aml, rho = 0)
+```
+

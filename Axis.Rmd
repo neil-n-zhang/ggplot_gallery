@@ -38,6 +38,28 @@ g2=ggplot(mpg, aes(x = drv, y = displ)) +
 
 g1+g2
 ```
+## Font type
+```{r}
+g1=ggplot(mpg, aes(x = drv, y = displ)) +
+      geom_boxplot()+ 
+  labs(x = "The type of drive train", y = "Engine displacement, in litres") +
+  scale_x_discrete(label = c("4wd","front-wheel drive","rear wheel drive"))+
+  theme(text = element_text(family = "Times New Roman"))
+
+g2=ggplot(mpg, aes(x = drv, y = displ)) +
+      geom_boxplot()+ 
+  labs(x = "The type of drive train", y = "Engine displacement, in litres") +
+  scale_x_discrete(label = c("4wd","front-wheel drive","rear wheel drive"))+
+  theme(plot.title    = element_text(family = "mono"),
+        plot.subtitle = element_text(family = "sans"),
+        axis.title.x  = element_text(family = "Comic Sans MS"),
+        axis.title.y  = element_text(family = "AppleGothic"),
+        axis.text.x   = element_text(family = "Optima"),
+        axis.text.y   = element_text(family = "Luminari"))
+
+g1+g2
+##On a Mac, you can go to the “Font Book” application and have a look at the list of fonts there. 
+```
 
 # Axis ticks
 ```{r}

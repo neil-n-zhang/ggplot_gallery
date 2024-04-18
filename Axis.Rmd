@@ -59,6 +59,7 @@ g2=ggplot(mpg, aes(x = drv, y = displ)) +
 
 g1+g2
 ##On a Mac, you can go to the “Font Book” application and have a look at the list of fonts there. 
+
 ```
 
 # Axis ticks

@@ -38,6 +38,25 @@ g2=ggplot(mpg, aes(x = drv, y = displ)) +
 
 g1+g2
 ```
+
+## Axis label angle
+
+```{r}
+g1=ggplot(mpg, aes(x = drv, y = displ)) +
+      geom_boxplot()+ 
+  labs(x = "The type of drive train", y = "Engine displacement, in litres") +
+  scale_x_discrete(label = c("4wd","front-wheel drive","rear wheel drive"))+ 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+g2=ggplot(mpg, aes(x = drv, y = displ)) +
+      geom_boxplot()+ 
+  labs(x = "The type of drive train", y = "Engine displacement, in litres") +
+  scale_x_discrete(label = c("4wd","front-wheel drive","rear wheel drive"))+ 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+g1+g2
+```
+
 ## Font type
 ```{r}
 g1=ggplot(mpg, aes(x = drv, y = displ)) +

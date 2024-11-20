@@ -1,0 +1,106 @@
+---
+title: "multi-figures layout"
+output: html_document
+date: "2024-03-17"
+---
+
+# facet_grid() forms a matrix of panels defined by row and column faceting variables. It is most useful when you have two discrete variables, and all combinations of the variables exist in the data. If you have only one variable with many levels, try facet_wrap().
+
+```{r}
+library(ggplot2)
+library(tidyverse)
+```
+
+# patchwork
+```{r}
+library(patchwork)
+```
+
+```{r}
+p1 <- ggplot(mtcars) + 
+  geom_point(aes(mpg, disp)) + 
+  ggtitle('Plot 1')
+
+p2 <- ggplot(mtcars) + 
+  geom_boxplot(aes(gear, disp, group = gear)) + 
+  ggtitle('Plot 2')
+
+p3 <- ggplot(mtcars) + 
+  geom_point(aes(hp, wt, colour = mpg)) + 
+  ggtitle('Plot 3')
+```
+
+```{r}
+p1+p2
+```
+
+```{r}
+p1+p2+p3+ plot_layout(nrow = 2, byrow = FALSE)
+```
+```{r}
+p1 / p2
+```
+
+# Use ggarrange to plot a list of figures
+```{r}
+library(ggpubr)
+```
+
+```{r}
+p1 <- ggplot(mtcars, aes(mpg, wt, colour = factor(cyl))) +
+  geom_point()
+p2 <- ggplot(mtcars, aes(mpg, wt, colour = factor(cyl))) +
+  geom_point() + facet_wrap( ~ cyl, ncol=2, scales = "free") +
+  guides(colour="none") +
+  theme()
+plot_list = list(p1,p2) 
+
+ggarrange(plotlist=plot_list, widths = c(2,1), labels = c("a", "b"), ncol = 2, nrow = 2)
+```
+
+# facet_grid
+```{r}
+ggplot(mpg, aes(displ, cty)) + geom_point() + facet_grid(vars(drv), vars(cyl))
+```
+
+# facet_wrap
+
+```{r}
+g1=ggplot(mpg, aes(displ, hwy)) + geom_point()+ facet_wrap(vars(class))
+g2=ggplot(mpg, aes(displ, hwy)) + geom_point()+ facet_wrap(vars(class), nrow = 4)
+g1+g2
+```
+
+# Change the scale for each sub plot
+```{r}
+g1=ggplot(mpg, aes(displ, hwy)) + geom_point()+ facet_wrap(vars(class), scales="free")
+g2=ggplot(mpg, aes(displ, hwy)) + geom_point()+ facet_wrap(vars(class), scales="free_y")
+g1+g2
+```
+
+# Overlay the two plots which have the same x axis
+```{r}
+histogram_data=tibble(d=sample.int(100,1000,replace = T))
+geomline_data=tibble( x = 1:100, a=2:101)
+```
+
+```{r}
+# Use the scale factor so that the two y-axis can have similar height.
+scale_factor=2
+
+ggplot() +
+  # Histogram for variable b
+  geom_histogram(data = histogram_data, aes(x = d, y = after_stat(count)),binwidth = 5, boundary = 0,
+                 fill = "skyblue", color = "black", alpha = 0.7,) +
+  # Line plot for variable a, scaled to match the density axis
+  geom_line(data = geomline_data, aes(x = x, y = a/scale_factor ), color = "red", size = 1) +
+  # Primary y-axis for histogram
+  scale_y_continuous(name = "Density (Histogram)", 
+                     sec.axis = sec_axis(~ . *scale_factor, name = "Value (Line Plot)")) +
+  theme_minimal() +
+  theme(
+    axis.title.y.right = element_text(color = "red")  # Color the right y-axis label for clarity
+  )
+```
+
+
